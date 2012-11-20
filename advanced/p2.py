@@ -4,41 +4,28 @@ Write a generator that returns all the subsets of a given set.
 """
 
 import unittest
+import itertools
 
-class Subsets(object):
-    def __init__(self, its_set):
-        self.its_set = its_set
-
-    def __iter__(self):
-        ## iterate somehow
-        inititial_set_size = len(self.its_set)
-        for set_size in range(inititial_set_size+1):
-            partial = set([])
-            for elem in self.its_set:
-                if len(partial) == set_size:
-                    yield partial
-                    break
-                else:
-                    partial |= set([elem])
-
+def subset_generator(its_set):
+    its_size = len(its_set)
+    for dim in range(its_size+1):
+        for elem in itertools.combinations(its_set, dim):
+            yield set(elem)
+    
 class SimpleSubsetsTest(unittest.TestCase):
     def setUp(self):
-        self.subsets = Subsets(set([1, 2, 3]))
+        self.its_set = set([1, 2, 3])
     
     def test_simple_subsets(self):
-        expected = [set([1, 2, 3]),
-                    set([1, 2]),
-                    set([1, 3]),
-                    set([2, 3]),
-                    set([1]),
-                    set([2]),
-                    set([3]),
-                    set([])]
+        expected = [set([]),
+                    set([1]), set([2]), set([3]),
+                    set([1, 2]), set([1, 3]), set([2, 3]),
+                    set([1, 2, 3])]
         actual = []
-        for subset in self.subsets:
+        for subset in subset_generator(self.its_set):
             actual.append(subset)
-        self.assertEquals(len(expected), len(actual))
         self.assertListEqual(expected, actual)
+        self.assertEquals(len(expected), len(actual))
                                                          
 if __name__ == '__main__':
     unittest.main()
